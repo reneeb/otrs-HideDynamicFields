@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="1.0" init="Config">
+    <ConfigItem Name="Frontend::Output::FilterContent###HideDynamicFields" Required="0" Valid="1">
+        <Description Translatable="1">Module to hide dynamic fields.</Description>
+        <Group>HideDynamicFields</Group>
+        <SubGroup>OutputFilter</SubGroup>
+        <Setting>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::FilterContent::HideDynamicFields</Item>
+                <Item Key="Debug">0</Item>
+                <Item Key="Templates">
+                    <Hash>
+                        <Item Key="AgentTicketEmail">1</Item>
+                        <Item Key="AgentTicketPhone">1</Item>
+                    </Hash>
+                </Item>
+            </Hash>
+        </Setting>
+    </ConfigItem>
+    <ConfigItem Name="HideDynamicFields::Filter###Dest" Required="0" Valid="0">
+        <Description Translatable="1">Defines which dynamic fields should be hidden for specific queues</Description>
+        <Group>HideDynamicFields</Group>
+        <SubGroup>Filters</SubGroup>
+        <Setting>
+            <Hash>
+                <Item Key="Misc">NameOfDynamicField</Item>
+            </Hash>
+        </Setting>
+    </ConfigItem>
+</otrs_config>

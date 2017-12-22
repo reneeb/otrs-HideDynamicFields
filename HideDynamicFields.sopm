@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_package version="1.0">
+    <!-- GENERATED WITH OTRS::OPM::Maker::Command::sopm (1.29) -->
+    <Name>HideDynamicFields</Name>
+    <Version>3.3.1</Version>
+    <Framework>3.3.x</Framework>
+    <Vendor>Perl-Services.de</Vendor>
+    <URL>http://www.perl-services.de</URL>
+    <Description Lang="de">Verstecke dynamische Felder bei bestimmten Queues</Description>
+    <Description Lang="en">Hide dynamic fields for certain queues</Description>
+    <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Output/HTML/FilterContent/HideDynamicFields.pm" />
+        <File Permission="644" Location="Kernel/Config/Files/HideDynamicFields.xml" />
+    </Filelist>
+</otrs_package>
