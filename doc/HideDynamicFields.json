@@ -1,0 +1,19 @@
+{
+    "name": "HideDynamicFields",
+    "version": "3.3.1",
+    "framework": [
+        "3.3.x"
+    ],
+    "vendor": {
+        "name":  "Perl-Services.de",
+        "url": "http://www.perl-services.de"
+    },
+    "license": "GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007",
+    "description" : {
+        "en": "Outputfilter to show/hide dynamic fields based on various ticket attributes",
+        "de": "Ausgabefilter um Dynamische Felder zu verstecken/anzuzeigen basierend auf verschiedenen Ticketattributen"
+    },
+    "exclude_files" : [
+        "doc/HideDynamicFields.json"
+    ]
+}
