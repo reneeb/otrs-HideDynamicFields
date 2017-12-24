@@ -11,8 +11,13 @@ package Kernel::Output::HTML::FilterContent::HideDynamicFields;
 use strict;
 use warnings;
 
-use Kernel::System::Queue;
-use Kernel::System::JSON;
+our @ObjectDependencies = qw(
+    Kernel::Config
+    Kernel::System::Queue
+    Kernel::System::JSON
+    Kernel::System::Web::Request
+    Kernel::Output::HTML::Layout
+);
 
 sub new {
     my ( $Type, %Param ) = @_;
@@ -21,17 +26,7 @@ sub new {
     my $Self = {};
     bless( $Self, $Type );
 
-    # get needed objects
-    for my $Object (
-        qw(MainObject ConfigObject LogObject LayoutObject ParamObject DBObject EncodeObject)
-        )
-    {
-        $Self->{$Object} = $Param{$Object} || die "Got no $Object!";
-    }
-
     $Self->{UserID}      = $Param{UserID};
-    $Self->{QueueObject} = Kernel::System::Queue->new( %{$Self} );
-    $Self->{JSONObject}  = Kernel::System::JSON->new( %{$Self} );
 
     return $Self;
 }
@@ -39,16 +34,22 @@ sub new {
 sub Run {
     my ( $Self, %Param ) = @_;
 
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
+    my $JSONObject   = $Kernel::OM->Get('Kernel::System::JSON');
+    my $QueueObject  = $Kernel::OM->Get('Kernel::System::Queue');
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
     # get template name
     #my $Templatename = $Param{TemplateFile} || '';
-    my $Action = $Self->{ParamObject}->GetParam( Param => 'Action' );
+    my $Action = $ParamObject->GetParam( Param => 'Action' );
 
     return 1 if !$Action;
     return 1 if !$Param{Templates}->{$Action};
 
-    my $Config = $Self->{ConfigObject}->Get('HideDynamicFields::Filter') || {};
+    my $Config = $ConfigObject->Get('HideDynamicFields::Filter') || {};
 
-    my %QueueList        = $Self->{QueueObject}->QueueList( UserID => 1 );
+    my %QueueList        = $QueueObject->QueueList( UserID => 1 );
     my %QueueListReverse = reverse %QueueList;
 
     my @Binds;
@@ -73,7 +74,7 @@ sub Run {
         push @Binds, $BindJS;
     }
 
-    my $JSON = $Self->{JSONObject}->Encode( Data => \%Rules );
+    my $JSON = $JSONObject->Encode( Data => \%Rules );
 
     my $JS = qq~
         <script type="text/javascript">//<![CDATA[
