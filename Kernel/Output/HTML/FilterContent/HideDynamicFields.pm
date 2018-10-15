@@ -1,5 +1,5 @@
 # --
-# Copyright (C) 2017 Perl-Services.de, http://www.perl-services.de/
+# Copyright (C) 2017 - 2018 Perl-Services.de, http://www.perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -39,6 +39,7 @@ sub Run {
     my $JSONObject   = $Kernel::OM->Get('Kernel::System::JSON');
     my $QueueObject  = $Kernel::OM->Get('Kernel::System::Queue');
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
 
     # get template name
     #my $Templatename = $Param{TemplateFile} || '';
@@ -47,6 +48,16 @@ sub Run {
     return 1 if !$Action;
     return 1 if !$Param{Templates}->{$Action};
 
+    my $TicketID = $ParamObject->GetParam( Param => 'TicketID' );
+    my %Ticket;
+
+    if ( $TicketID ) {
+        %Ticket = $TicketObject->TicketGet(
+            TicketID => $TicketID,
+            UserID   => $LayoutObject->{UserID},
+        );
+    }
+
     my $Config = $ConfigObject->Get('HideDynamicFields::Filter') || {};
 
     my %QueueList        = $QueueObject->QueueList( UserID => 1 );
@@ -54,21 +65,29 @@ sub Run {
 
     my @Binds;
     my %Rules;
+    my $HideJS = '';
 
     for my $Name ( sort keys %{ $Config } ) {
         my $BindJS = sprintf q~$('#%s').bind('change', function() {
             DoHideDynamicFields();
         });~, $Name;
 
+        my $TicketKey = $Name;
 
         for my $Value ( keys %{ $Config->{$Name} || {} } ) {
             my $OrigValue = $Value;
 
             if ( $Name eq 'Dest' ) {
                 $Value = sprintf "%s||%s", $QueueListReverse{$Value}, $Value;
+                $TicketKey = 'Queue';
             }
 
-            $Rules{$Name}->{$Value} = [ split /\s*,\s*/, $Config->{$Name}->{$OrigValue} ];
+            my @Fields = split /\s*,\s*/, $Config->{$Name}->{$OrigValue};
+            $Rules{$Name}->{$Value} = \@Fields;
+
+            if ( $Ticket{$TicketKey} eq $OrigValue ) {
+                $HideJS .= sprintf "HideDynamicField('%s'); ", $_ for @Fields;
+            }
         }
 
         push @Binds, $BindJS;
@@ -103,6 +122,8 @@ sub Run {
         Core.App.Ready( function() {
             @Binds
         });
+
+        $HideJS
         //]]></script>
     ~;
 
