@@ -1,11 +1,35 @@
 =head1 HideDynamicFields
 
-This modules helps you to show/hide dynamic fields in "new email ticket" and "new phone ticket" dialogs.
+This modules helps you to show/hide dynamic fields in "new ticket" and other dialogs.
 When an agents changes the selection of a dropdown field, it is checked whether a dynamic field should
 be shown or hidden.
 
 The standard installation of this addon adds a system configuration option that binds the dynamic field
-display to the chosen queue. But you can define your own bindings:
+display to the chosen queue.
+
+=head2 Hiding dynamic fields based on the selected queue
+
+This is the standard feature of this addon. In several dialogs the dynamic fields can be hidden. First
+you have to define, which dialogs are affected:
+
+In the system configuration setting I<Frontend::Output::FilterContent###HideDynamicFields> you define
+in the Templates listing which actions should be handled. By default only AgentTicketEmail and
+AgentTicketPhone are handled. You can define any dialog where dynamic fields can be shown (e.g. AgentTicketCompose,
+AgentTicketNote, ...).
+
+The next step is define, which dynamic fields should be hidden for certain queues. If you want
+to hide the field "OnboardTime" for the queue "IT", you have to define the key "IT" with the
+value "OnboardTime" in the system configuration setting I<HideDynamicFields::Filter###Dest>.
+
+If the field "SupportContract" when the agent selects the queue "Human Resources" or the ticket
+is in that queue, you have to define the key "Human Resources" with the value "SupportContract" in
+the above mentioned setting.
+
+You can hide several fields, just provide a comma separated list of field names in the value part.
+
+=head2 Defining your own bindings
+
+But you can define your own bindings:
 
 Create a custom sysconfig definition file. In this example an OTRS >= 6.0.x version is shown:
 
