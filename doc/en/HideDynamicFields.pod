@@ -1,0 +1,32 @@
+=head1 HideDynamicFields
+
+This modules helps you to show/hide dynamic fields in "new email ticket" and "new phone ticket" dialogs.
+When an agents changes the selection of a dropdown field, it is checked whether a dynamic field should
+be shown or hidden.
+
+The standard installation of this addon adds a system configuration option that binds the dynamic field
+display to the chosen queue. But you can define your own bindings:
+
+Create a custom sysconfig definition file. In this example an OTRS >= 6.0.x version is shown:
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <otrs_config version="2.0" init="Config">
+        <Setting Name="HideDynamicFields::Filter###PriorityID" Required="0" Valid="0">
+            <Description Translatable="1">
+                Defines which dynamic fields should be hidden for specific priorities
+            </Description>
+            <Navigation>Filters</Navigation>
+            <Value>
+                <Hash>
+                    <Item Key="1 very low">NameOfDynamicField</Item>
+                </Hash>
+            </Value>
+        </Setting>
+    </otrs_config>
+
+The "PriorityID" in the name can be replaced with any dropdown field name in the dialog. In the default installation
+it is I<Dest>, in this case it is the priority selection (the field is named I<PriorityID>).
+
+The keys in the hash have to be the value of the dropdown for which one or more dynamic fields should be hidden.
+And the value is the name of the dynamic field.
+
