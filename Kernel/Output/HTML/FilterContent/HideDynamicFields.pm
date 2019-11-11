@@ -101,7 +101,7 @@ sub Run {
     my $JS = qq~
         <script type="text/javascript">//<![CDATA[
         var HideDynamicFieldRules = $JSON;
-	var ValueText             = $ValueText;
+        var ValueText             = $ValueText;
 
         function ShowDynamicFields() {
             \$('.Row').show();
@@ -127,9 +127,9 @@ sub Run {
             \$('.Row_DynamicField_' + FieldName ).hide();
         }
 
-	function InitHideDynamicField () {
-	    @Binds
-	}
+        function InitHideDynamicField () {
+            @Binds
+        }
 
         Core.App.Ready( function() {
             InitHideDynamicField();
