@@ -25,4 +25,23 @@
             </Hash>
         </Value>
     </Setting>
+    <Setting Name="HideDynamicFields::Filter###QueueID" Required="0" Valid="0">
+        <Description Translatable="1">Defines which dynamic fields should be hidden for specific queues</Description>
+        <Navigation>Filters</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Misc">NameOfDynamicField</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="HideDynamicFields::ValueTexts" Required="1" Valid="1">
+        <Description Translatable="1">On some fields (e.g. QueueID) work with the texts and some fields (e.g. Dest) work on values of the dropdown </Description>
+        <Navigation>Core</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Dest">id</Item>
+                <Item Key="QueueID">text</Item>
+            </Hash>
+        </Value>
+    </Setting>
 </otrs_config>
