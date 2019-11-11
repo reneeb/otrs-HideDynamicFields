@@ -115,7 +115,15 @@ sub Run {
                 var CurrentText  = \$('#' + Field + ' option:selected').text();
                 var Current = UseText ? CurrentText : CurrentValue;
 
+                if ( Current === "" ) {
+                    return;
+                }
+
                 var ToHide  = Config[Current];
+                if ( ToHide === undefined ) {
+                    return;
+                }
+
                 \$.each( ToHide, function( Index, Name ) {
                     HideDynamicField( Name );
                 });
