@@ -95,9 +95,13 @@ sub Run {
 
     my $JSON = $JSONObject->Encode( Data => \%Rules );
 
+    my $ConfigValueTexts = $ConfigObject->Get('HideDynamicFields::ValueTexts');
+    my $ValueText        = $JSONObject->Encode( Data => $ConfigValueTexts );
+
     my $JS = qq~
         <script type="text/javascript">//<![CDATA[
         var HideDynamicFieldRules = $JSON;
+	var ValueText             = $ValueText;
 
         function ShowDynamicFields() {
             \$('.Row').show();
@@ -106,7 +110,11 @@ sub Run {
         function DoHideDynamicFields() {
             ShowDynamicFields();
             \$.each( HideDynamicFieldRules, function( Field, Config ) {
-                var Current = \$('#' + Field).val();
+                var UseText      = ValueText[Field] === "text" ? 1 : 0;
+                var CurrentValue = \$('#' + Field).val();
+                var CurrentText  = \$('#' + Field + ' option:selected').text();
+                var Current = UseText ? CurrentText : CurrentValue;
+
                 var ToHide  = Config[Current];
                 \$.each( ToHide, function( Index, Name ) {
                     HideDynamicField( Name );
@@ -119,8 +127,12 @@ sub Run {
             \$('.Row_DynamicField_' + FieldName ).hide();
         }
 
+	function InitHideDynamicField () {
+	    @Binds
+	}
+
         Core.App.Ready( function() {
-            @Binds
+            InitHideDynamicField();
         });
 
         $HideJS
@@ -128,6 +140,13 @@ sub Run {
     ~;
 
     ${ $Param{Data} } =~ s{</body}{$JS</body};
+
+    my $Subaction = $ParamObject->GetParam( Param => 'Subaction' );
+    if ( $Action =~ m{(?:Agent|Customer)TicketProcess}xms && $Subaction eq 'DisplayActivityDialogAJAX' ) {
+        ${ $Param{Data} } =~ s{.*\K$}{
+            <script type="text/javascript">InitHideDynamicField(); DoHideDynamicFields()</script>
+        };
+    }
 
     return 1;
 }
