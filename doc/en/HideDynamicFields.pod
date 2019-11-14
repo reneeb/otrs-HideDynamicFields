@@ -54,3 +54,38 @@ it is I<Dest>, in this case it is the priority selection (the field is named I<P
 The keys in the hash have to be the value of the dropdown for which one or more dynamic fields should be hidden.
 And the value is the name of the dynamic field.
 
+=head2 Filter based on Dynamic Fields
+
+You can bind the filters to Dynamic Fields as well. 
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <otrs_config version="2.0" init="Config">
+        <Setting Name="HideDynamicFields::Filter###DynamicField_FieldName" Required="0" Valid="0">
+            <Description Translatable="1">
+                Defines which dynamic fields should be hidden for specific priorities
+            </Description>
+            <Navigation>Filters</Navigation>
+            <Value>
+                <Hash>
+                    <Item Key="1 very low">NameOfDynamicField</Item>
+                </Hash>
+            </Value>
+        </Setting>
+    </otrs_config>
+
+Any type of dynamic field should work, given the new option added in version 6.0.3: `HideDynamicFields::ValueTexts`
+
+=head2 HideDynamicFields::ValueTexts
+
+In this sysconfig option you can define what attribute of the bound field should be used to check if fields should
+be hidden.
+
+E.g. in some dialogs the dropdown to select a queue has the id _Dest_ (AgentTicketPhone, AgentTicketEmail), in other
+dialogs (e.g. AgentTicketProcess) this dropdown has the id _QueueID_. If you want to use the Queue name in the 
+filter sysconfig option (_HideDynamicFields::Filter###QueueID_) you have to tell HideDynamicFields this.
+
+Thats what this config option is for. So in this case you have to define the key _QueueID_ (name of the filter) and
+the value _text_. Therefor the text of the selected option in the dropdown is checked if some fields should be hidden.
+If you want to use the queue id in the filter, then the correct value in this sysconfig option is _id_.
+
+If you bind a filter to a dynamic field of type _Checkbox_, you have to use the value _bool_.
