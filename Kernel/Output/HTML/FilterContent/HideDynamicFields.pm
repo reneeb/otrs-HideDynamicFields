@@ -110,10 +110,21 @@ sub Run {
         function DoHideDynamicFields() {
             ShowDynamicFields();
             \$.each( HideDynamicFieldRules, function( Field, Config ) {
-                var UseText      = ValueText[Field] === "text" ? 1 : 0;
-                var CurrentValue = \$('#' + Field).val();
-                var CurrentText  = \$('#' + Field + ' option:selected').text();
-                var Current = UseText ? CurrentText : CurrentValue;
+                var Type = ValueText[Field];
+
+                if ( Type === "" || Type === undefined ) {
+                    Type = 'id';
+                }
+
+                Type = Type.toLowerCase();
+
+                var PossibleValues = {
+                    id:  \$('#' + Field).val(),
+                    text: \$('#' + Field + ' option:selected').text(),
+                    bool: (\$('#' + Field).is(':checked') ? 1 : 0),
+                };
+
+                var Current = PossibleValues[Type];
 
                 if ( Current === "" ) {
 		    return;
