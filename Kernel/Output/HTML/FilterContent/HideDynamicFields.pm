@@ -86,13 +86,18 @@ sub Run {
         my $TicketKey = $Name;
         (my $ShortKey = $TicketKey) =~ s{ID$}{}xms;
 
+        $Ticket{$TicketKey} //= '';
+        $Ticket{$ShortKey}  //= '';
+
         for my $Value ( keys %{ $Config->{$Name} || {} } ) {
             my $OrigValue = $Value;
 
             if ( $Name eq 'Dest' ) {
-                $Value = sprintf "%s||%s", $QueueListReverse{$Value}, $Value;
+                $Value = sprintf "%s||%s", ( $QueueListReverse{$Value} // '' ), $Value;
                 $TicketKey = 'Queue';
             }
+
+            $Ticket{$TicketKey} //= '';
 
             my @Fields = split /\s*,\s*/, $Config->{$Name}->{$OrigValue};
             $Rules{$Name}->{$Value} = \@Fields;
