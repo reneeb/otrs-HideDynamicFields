@@ -48,10 +48,21 @@ sub Run {
     return 1 if !$Action;
     return 1 if !$Param{Templates}->{$Action};
 
-    my $TicketID = $ParamObject->GetParam( Param => 'TicketID' );
+    my $TicketID     = $ParamObject->GetParam( Param => 'TicketID' );
+    my $TicketNumber = $ParamObject->GetParam( Param => 'TicketNumber' );
     my %Ticket;
 
     if ( $TicketID ) {
+        %Ticket = $TicketObject->TicketGet(
+            TicketID => $TicketID,
+            UserID   => $LayoutObject->{UserID},
+        );
+    }
+    elsif ( $TicketNumber ) {
+        $TicketID = $TicketObject->TicketCheckNumber(
+            Tn => $TicketNumber,
+        );
+
         %Ticket = $TicketObject->TicketGet(
             TicketID => $TicketID,
             UserID   => $LayoutObject->{UserID},
@@ -73,19 +84,25 @@ sub Run {
         });~, $Name;
 
         my $TicketKey = $Name;
+        (my $ShortKey = $TicketKey) =~ s{ID$}{}xms;
+
+        $Ticket{$TicketKey} //= '';
+        $Ticket{$ShortKey}  //= '';
 
         for my $Value ( keys %{ $Config->{$Name} || {} } ) {
             my $OrigValue = $Value;
 
             if ( $Name eq 'Dest' ) {
-                $Value = sprintf "%s||%s", $QueueListReverse{$Value}, $Value;
+                $Value = sprintf "%s||%s", ( $QueueListReverse{$Value} // '' ), $Value;
                 $TicketKey = 'Queue';
             }
+
+            $Ticket{$TicketKey} //= '';
 
             my @Fields = split /\s*,\s*/, $Config->{$Name}->{$OrigValue};
             $Rules{$Name}->{$Value} = \@Fields;
 
-            if ( $Ticket{$TicketKey} eq $OrigValue ) {
+            if ( $Ticket{$TicketKey} eq $OrigValue || $Ticket{$ShortKey} eq $OrigValue ) {
                 $HideJS .= sprintf "HideDynamicField('%s'); ", $_ for @Fields;
             }
         }
@@ -127,13 +144,13 @@ sub Run {
                 var Current = PossibleValues[Type];
 
                 if ( Current === "" ) {
-		    return;
-		}
+                    return;
+                }
 
                 var ToHide  = Config[Current];
                 if ( ToHide === undefined ) {
-		    return;
-		}
+                    return;
+                }
 
                 \$.each( ToHide, function( Index, Name ) {
                     HideDynamicField( Name );
