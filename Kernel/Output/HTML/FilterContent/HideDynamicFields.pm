@@ -26,7 +26,7 @@ sub new {
     my $Self = {};
     bless( $Self, $Type );
 
-    $Self->{UserID}      = $Param{UserID};
+    $Self->{UserID} = $Param{UserID};
 
     return $Self;
 }
@@ -71,12 +71,33 @@ sub Run {
 
     my $Config = $ConfigObject->Get('HideDynamicFields::Filter') || {};
 
+    my $AllInits   = $ConfigObject->Get('HideDynamicFields::InitForms') || [];
+    my ($ThisInit) = grep { $_->{Action} eq $Action } @{ $AllInits };
+
     my %QueueList        = $QueueObject->QueueList( UserID => 1 );
     my %QueueListReverse = reverse %QueueList;
 
     my @Binds;
     my %Rules;
     my $HideJS = '';
+
+    if ( $ThisInit && $ThisInit->{Hide} ) {
+        my $ActionConfig  = $ConfigObject->Get("Ticket::Frontend::$Action") || {};
+        my %DynamicFields = map { $_ => 1 } split /\s*,\s*/, $ThisInit->{Hide};
+
+        if ( $ThisInit->{Hide} eq '<all>' ) {
+            %DynamicFields = %{ $ActionConfig->{DynamicField} || {} };
+        }
+
+        my %Show = map { $_ => 1 } split /\s*,\s*/, $ThisInit->{Show} // '';
+
+        INITDYNAMICFIELD:
+        for my $DynamicField ( sort keys %DynamicFields ) {
+            next INITDYNAMICFIELD if $Show{$DynamicField};
+
+            $HideJS .= sprintf "HideDynamicField('%s'); ", $DynamicField;
+        }
+    }
 
     for my $Name ( sort keys %{ $Config } ) {
         my $BindJS = sprintf q~$('#%s').bind('change', function() {

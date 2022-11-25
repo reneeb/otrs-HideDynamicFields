@@ -44,4 +44,25 @@
             </Hash>
         </Value>
     </Setting>
+    <Setting Name="HideDynamicFields::InitForms" Required="1" Valid="0">
+        <Description Translatable="1">Defines initial state for some forms. This can be used to initially hide some fields. Action = Action/Form name, Hide = List of all dynamic fields to be hidden (comma separated list), Show = List of dynamic fields to be shown when the "special" dynamic field "&lt;all&gt;" is selected for "Hide". </Description>
+        <Navigation>Core</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem>
+                    <Hash>
+                        <DefaultItem ValueType="String"></DefaultItem>
+                    </Hash>
+                </DefaultItem>
+                <Item>
+                    <Hash>
+                        <Item Key="Action">CustomerTicketMessage</Item>
+                        <Item Key="Hide">&lt;all&gt;</Item>
+                        <Item Key="Show">OneDynamicField, AnotherDynamicField</Item>
+                    </Hash>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+</otrs_config>
 </otrs_config>
