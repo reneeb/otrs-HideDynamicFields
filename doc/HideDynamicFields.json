@@ -1,12 +1,14 @@
 {
     "name": "HideDynamicFields",
-    "version": "6.0.7",
+    "version": "6.0.8",
     "framework": [
         "6.0.x",
         "6.1.x",
         "6.2.x",
         "6.3.x",
-        "6.4.x"
+        "6.4.x",
+        "6.5.x",
+        "7.0.x"
     ],
     "vendor": {
         "name":  "Perl-Services.de",
@@ -18,6 +20,7 @@
         "de": "Ausgabefilter um Dynamische Felder zu verstecken/anzuzeigen basierend auf verschiedenen Ticketattributen"
     },
     "exclude_files" : [
-        "doc/HideDynamicFields.json"
+        "doc/HideDynamicFields.json",
+        "scripts/setup.pl"
     ]
 }
